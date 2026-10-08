@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards Persiapan UTS Algoritma & Pemrograman</title>
+    <!-- React & React DOM CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <!-- Babel Standalone CDN for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const flashcardsData = [
+            // Materi 1: Berpikir Komputasional & Dekomposisi
+            {
+                id: 1,
+                category: "Berpikir Komputasional",
+                front: "Definisi Algoritma",
+                back: "Urutan langkah yang logis dan sistematis untuk menyelesaikan masalah.",
+                hint: "Langkah-langkah terstruktur untuk hasil yang diharapkan."
+            },
+            {
+                id: 2,
+                category: "Berpikir Komputasional",
+                front: "Perbedaan Algoritma dan Program",
+                back: "Algoritma adalah rancangan/logika cara menyelesaikan masalah, sedangkan Program adalah implementasi algoritma dalam bahasa pemrograman.",
+                hint: "Satu rancangan logika vs eksekusi kode komputer."
+            },
+            {
+                id: 3,
+                category: "Berpikir Komputasional",
+                front: "4 Pilar Berpikir Komputasional",
+                back: "1. Dekomposisi\n2. Pengenalan Pola\n3. Abstraksi\n4. Algoritma",
+                hint: "Memecah, mencari kesamaan, fokus hal penting, membuat langkah."
+            },
+            {
+                id: 4,
+                category: "Berpikir Komputasional",
+                front: "Teknik Dekomposisi",
+                back: "Teknik memecah masalah kompleks menjadi submasalah/bagian-bagian kecil yang lebih sederhana.",
+                hint: "Strategi Divide & Conquer."
+            },
+            {
+                id: 5,
+                category: "Berpikir Komputasional",
+                front: "Konsep Model IPO",
+                back: "Model analisis sistem terdiri dari Input (data masuk), Process (operasi/aturan), dan Output (hasil/informasi).",
+                hint: "Data masuk -> Pengolahan -> Hasil akhir."
+            },
+            {
+                id: 6,
+                category: "Berpikir Komputasional",
+                front: "Manfaat Dekomposisi dalam Pemrograman",
+                back: "Mengurangi kompleksitas, mempermudah analisis, pengujian/debugging, pemeliharaan kode, dan pembagian kerja tim.",
+                hint: "Mengapa masalah besar lebih mudah ditangani jika dipecah?"
+            },
+            {
+                id: 7,
+                category: "Berpikir Komputasional",
+                front: "Langkah Alur Problem Solving",
+                back: "1. Identifikasi masalah\n2. Pahami kebutuhan\n3. Dekomposisi\n4. Identifikasi IPO\n5. Rancang algoritma\n6. Implementasikan\n7. Uji & Evaluasi",
+                hint: "Urutan dari analisis awal hingga pengujian kode."
+            },
+
+            // Materi 2: Flowchart & Struktur Dasar Algoritma
+            {
+                id: 8,
+                category: "Flowchart",
+                front: "Definisi Flowchart",
+                back: "Bagan atau diagram yang menggambarkan aliran proses dari awal sampai akhir untuk menyelesaikan masalah.",
+                hint: "Algoritma yang divisualisasikan dalam bentuk diagram."
+            },
+            {
+                id: 9,
+                category: "Flowchart",
+                front: "3 Struktur Dasar Algoritma",
+                back: "1. Runtunan (Sequence)\n2. Pemilihan (Selection/Branching)\n3. Pengulangan (Repetition/Looping)",
+                hint: "Berurutan, kondisi/cabang, dan iterasi."
+            },
+            {
+                id: 10,
+                category: "Flowchart",
+                front: "Fungsi Simbol Oval (Terminator)",
+                back: "Menunjukkan awal (Start) dan akhir (Stop/End) dari suatu program atau flowchart.",
+                hint: "Simbol paling pertama dan paling terakhir."
+            },
+            {
+                id: 11,
+                category: "Flowchart",
+                front: "Fungsi Simbol Jajaran Genjang (Input/Output)",
+                back: "Menunjukkan operasi masukan (input) data atau keluaran (output) hasil.",
+                hint: "Menerima input dari pengguna atau menampilkan ke layar."
+            },
+            {
+                id: 12,
+                category: "Flowchart",
+                front: "Fungsi Simbol Persegi Panjang (Process)",
+                back: "Menunjukkan pengolahan aritmatika atau perubahan nilai variabel.",
+                hint: "Digunakan untuk perhitungan matematika."
+            },
+            {
+                id: 13,
+                category: "Flowchart",
+                front: "Fungsi Simbol Belah Ketupat (Decision)",
+                back: "Menunjukkan proses evaluasi kondisi untuk memilih keputusan (cabang Ya/Tidak).",
+                hint: "Pemeriksaan kondisi True/False."
+            },
+            {
+                id: 14,
+                category: "Flowchart",
+                front: "Fungsi Simbol Segi Enam (Preparation)",
+                back: "Menunjukkan persiapan pemberian nilai awal pada variabel atau permulaan perulangan.",
+                hint: "Inisialisasi nilai variabel atau loop."
+            },
+            {
+                id: 15,
+                category: "Flowchart",
+                front: "Perbedaan On-page Connector dan Off-page Connector",
+                back: "On-page Connector (Lingkaran) menghubungkan flowchart dalam halaman yang sama. Off-page Connector menghubungkan flowchart antar halaman berbeda.",
+                hint: "Satu halaman vs beda halaman."
+            },
+            {
+                id: 16,
+                category: "Flowchart",
+                front: "Dua Jenis Flowchart Utama",
+                back: "1. System Flowchart (untuk sistem pengolahan data)\n2. Program Flowchart (untuk penyusunan/pembuatan logika program)",
+                hint: "Level sistematis vs level logika kode program."
+            },
+
+            // Materi 3: Teknik Pemrograman Dasar C++
+            {
+                id: 17,
+                category: "Dasar C++",
+                front: "Pencipta dan Tahun Rilis Bahasa C++",
+                back: "Dikembangkan oleh Bjarne Stroustrup pada tahun 1983 berbasis bahasa C.",
+                hint: "C dikembangkan Dennis Ritchie (1971), C++ oleh siapa?"
+            },
+            {
+                id: 18,
+                category: "Dasar C++",
+                front: "Keistimewaan Utama C++ dibanding C",
+                back: "Mendukung Object-Oriented Programming (OOP) dan dapat berhubungan langsung dengan bahasa tingkat rendah.",
+                hint: "Paradigma Berbasis Objek."
+            },
+            {
+                id: 19,
+                category: "Dasar C++",
+                front: "Tahapan Kompilasi Program C++",
+                back: "Source code -> Preprocessor -> Kompiler -> Assembler -> Link Editor -> File EXE.",
+                hint: "Proses dari berkas .cpp menjadi berkas executable .exe."
+            },
+            {
+                id: 20,
+                category: "Dasar C++",
+                front: "Fungsi Preprocessor Directive `#include <iostream>`",
+                back: "Header file yang menyediakan fasilitas input-output standar seperti `cin` dan `cout`.",
+                hint: "Membawa fungsi stream input dan output."
+            },
+            {
+                id: 21,
+                category: "Dasar C++",
+                front: "Aturan Penulisan Komentar dalam C++",
+                back: "Gunakan `//` untuk komentar satu baris dan `/* ... */` untuk komentar banyak baris.",
+                hint: "Single line comment & multi-line comment."
+            },
+            {
+                id: 22,
+                category: "Dasar C++",
+                front: "Definisi Identifier",
+                back: "Pengenal/nama yang dideklarasikan oleh programmer untuk menampung nilai (variabel, konstanta, fungsi, kelas, dll).",
+                hint: "Nama penanda elemen dalam kode."
+            },
+            {
+                id: 23,
+                category: "Dasar C++",
+                front: "Dua Cara Deklarasi Konstanta pada C++",
+                back: "1. Preprosesor: `#define PHI 3.14`\n2. Keyword const: `const double PI = 3.14;`",
+                hint: "Gunakan `#define` atau kata kunci `const`."
+            },
+            {
+                id: 24,
+                category: "Dasar C++",
+                front: "Syarat Aturan Penamaan Variabel C++",
+                back: "1. Maksimal 32 karakter\n2. Case sensitive\n3. Karakter pertama harus huruf/underscore (`_`)\n4. Tidak boleh menggunakan spasi\n5. Tidak boleh keyword C++",
+                hint: "Karakter pertama, spasi, reserved words, besar/kecil huruf."
+            },
+            {
+                id: 25,
+                category: "Dasar C++",
+                front: "Ukuran Memori Tipe Data Utama C++",
+                back: "`char`: 1 byte\n`short int`: 2 byte\n`int`: 4 byte (atau 2 byte lama)\n`float`: 4 byte\n`double`: 8 byte",
+                hint: "Alokasi ukuran memori untuk data karakter, bulat, dan desimal."
+            },
+
+            // Materi 4: Input, Output, dan Operator
+            {
+                id: 26,
+                category: "Input Output & Operator",
+                front: "Sintaks Input dan Output Standar C++",
+                back: "Output menggunakan `cout` dengan operator `<<`.\nInput menggunakan `cin` dengan operator `>>`.",
+                hint: "Perhatikan arah panah operator pada cin dan cout."
+            },
+            {
+                id: 27,
+                category: "Input Output & Operator",
+                front: "Definisi Operator Assignment",
+                back: "Operator untuk memasukkan (assign) nilai ke dalam variabel atau konstanta, menggunakan simbol `=`.",
+                hint: "Memberi nilai variabel, contoh: `a = 10;`"
+            },
+            {
+                id: 28,
+                category: "Input Output & Operator",
+                front: "Perbedaan Pre-increment (`++X`) dan Post-increment (`X++`)",
+                back: "`++X` menambah nilai `X` sebesar 1 TERLEBIH DAHULU sebelum dievaluasi dalam ekspresi.\n`X++` menggunakan nilai `X` yang lama DAHULU, baru nilainya ditambah 1.",
+                hint: "Kapan penambahan 1 terjadi: sebelum atau sesudah ekspresi dihitung?"
+            },
+            {
+                id: 29,
+                category: "Input Output & Operator",
+                front: "Daftar Operator Aritmetika C++",
+                back: "`+` (Penjumlahan)\n`-` (Pengurangan)\n`*` (Perkalian)\n`/` (Pembagian)\n`%` (Modulus / Sisa Bagi)",
+                hint: "Simbol matematika dasar termasuk sisa bagi."
+            },
+            {
+                id: 30,
+                category: "Input Output & Operator",
+                front: "Fungsi Operator Modulus (`%`) dan Syarat Operand-nya",
+                back: "Menghitung sisa hasil bagi dari dua bilangan bulat. Hanya dapat digunakan pada tipe data bulat (integer).",
+                hint: "Misal $10 \\% 3 = 1$. Tidak bisa digunakan pada float/double."
+            },
+            {
+                id: 31,
+                category: "Input Output & Operator",
+                front: "Simbol Operator Logika C++",
+                back: "`&&` (AND / dan)\n`||` (OR / atau)\n`!` (NOT / negasi)",
+                hint: "Ganda ampersand, ganda pipe, dan tanda seru."
+            },
+            {
+                id: 32,
+                category: "Input Output & Operator",
+                front: "Simbol Operator Relasional C++",
+                back: "`>` (Lebih besar)\n`<` (Lebih kecil)\n`>=` (Lebih besar sama dengan)\n`<=` (Lebih kecil sama dengan)\n`==` (Sama dengan)\n`!=` (Tidak sama dengan)",
+                hint: "Digunakan untuk membandingkan dua nilai pada perbandingan logika."
+            },
+
+            // Materi 5: Selection (Percabangan)
+            {
+                id: 33,
+                category: "Selection",
+                front: "Definisi Selection Statement",
+                back: "Kemampuan program untuk membuat keputusan dan memilih jalur eksekusi instruksi berdasarkan pemenuhan kondisi.",
+                hint: "Pengambilan keputusan logika True/False."
+            },
+            {
+                id: 34,
+                category: "Selection",
+                front: "Sintaks Struktur Percabangan `if-else` Dua Kondisi",
+                back: "
+```cpp\nif (kondisi) {\n    // Aksi jika kondisi benar\n} else {\n    // Aksi jika kondisi salah\n}\n```",
+                hint: "Jika True jalankan blok A, selain itu jalankan blok B."
+            },
+            {
+                id: 35,
+                category: "Selection",
+                front: "Fungsi Keyword `switch-case`",
+                back: "Struktur percabangan yang memilih salah satu jalur eksekusi dari banyak pilihan berdasarkan pencocokan nilai tunggal dari sebuah variabel/ekspresi.",
+                hint: "Alternatif `if-else` bertingkat untuk nilai pasti."
+            },
+            {
+                id: 36,
+                category: "Selection",
+                front: "Peran Statemen `break` pada `switch-case`",
+                back: "Menghentikan eksekusi blok `switch` dan keluar dari percabangan setelah suatu `case` terpenuhi.",
+                hint: "Jika lupa dipakai, eksekusi akan lanjut menembus ke case di bawahnya (fall-through)."
+            },
+            {
+                id: 37,
+                category: "Selection",
+                front: "Fungsi `default:` pada `switch-case`",
+                back: "Menyediakan aksi alternatif jika nilai ekspresi tidak cocok dengan satu pun pilihan `case` yang ada.",
+                hint: "Mirip blok `else` terakhir pada struktur `if-else`."
+            },
+            {
+                id: 38,
+                category: "Selection",
+                front: "Bentuk Ekspresi Penentuan Bilangan Ganjil/Genap",
+                back: "`if (bil % 2 == 0)` merupakan bilangan Genap, selain itu Ganjil.",
+                hint: "Memanfaatkan operator sisa bagi angka 2."
+            },
+
+            // Materi 6: Iteration (Pengulangan)
+            {
+                id: 39,
+                category: "Iteration",
+                front: "3 Jenis Struktur Pengulangan C++",
+                back: "1. `for` loop\n2. `while` loop\n3. `do-while` loop",
+                hint: "Tiga sintaks perulangan utama C++."
+            },
+            {
+                id: 40,
+                category: "Iteration",
+                front: "Kapan Sebaiknya Menggunakan `for` Loop?",
+                back: "Ketika jumlah banyaknya iterasi atau pengulangan sudah diketahui dengan pasti.",
+                hint: "Pilihan tepat jika batas awal dan batas akhir pengulangan jelas."
+            },
+            {
+                id: 41,
+                category: "Iteration",
+                front: "Sintaks Dasar `for` Loop",
+                back: "
+```cpp\nfor (inisialisasi; kondisi; increment/decrement) {\n    // Statemen yang diulang\n}\n```",
+                hint: "Terdiri dari 3 bagian di dalam tanda kurung."
+            },
+            {
+                id: 42,
+                category: "Iteration",
+                front: "Perbedaan Utama `while` dan `do-while`",
+                back: "`while`: Kondisi diperiksa TERLEBIH DAHULU sebelum aksi dijalankan.\n`do-while`: Aksi dijalankan minimal 1 KALI TERLEBIH DAHULU baru kondisi diperiksa.",
+                hint: "Uji kondisi di awal vs uji kondisi di akhir."
+            },
+            {
+                id: 43,
+                category: "Iteration",
+                front: "Bahaya Infinite Loop dalam Perulangan",
+                back: "Terjadi ketika kondisi perulangan selalu bernilai True (benar) akibat lupa menambahkan increment/decrement atau logika kondisi salah.",
+                hint: "Program akan terus berjalan tanpa henti."
+            },
+
+            // Materi 7: Operasi String
+            {
+                id: 44,
+                category: "Operasi String",
+                front: "Header File untuk Fungsi-fungsi String C++",
+                back: "`#include <string.h>` atau `#include <cstring>`",
+                hint: "Header file khusus manipulasi c-string."
+            },
+            {
+                id: 45,
+                category: "Operasi String",
+                front: "Fungsi `strlen()`",
+                back: "Menghitung dan mengembalikan jumlah/panjang karakter dalam suatu string.",
+                hint: "Length dari string."
+            },
+            {
+                id: 46,
+                category: "Operasi String",
+                front: "Fungsi `strcpy(dest, src)`",
+                back: "Menyalin isi string sumber (`src`) ke dalam variabel string tujuan (`dest`).",
+                hint: "Copy string."
+            },
+            {
+                id: 47,
+                category: "Operasi String",
+                front: "Fungsi `strcmp(str1, str2)`",
+                back: "Membandingkan 2 string secara alfabetis. Mengembalikan 0 jika sama, <0 jika str1 < str2, dan >0 jika str1 > str2.",
+                hint: "Compare 2 buah string."
+            },
+            {
+                id: 48,
+                category: "Operasi String",
+                front: "Fungsi `strcat(str1, str2)`",
+                back: "Menggabungkan dua buah string dengan menyambungkan `str2` ke akhir `str1`.",
+                hint: "Concatenate string."
+            },
+            {
+                id: 49,
+                category: "Operasi String",
+                front: "Fungsi `strupr()` dan `strlwr()`",
+                back: "`strupr()` mengubah semua huruf string menjadi KAPITAL (uppercase).\n`strlwr()` mengubah semua huruf string menjadi KECIL (lowercase).",
+                hint: "Upper case dan Lower case."
+            },
+            {
+                id: 50,
+                category: "Operasi String",
+                front: "Fungsi `strrev()` dan `strchr()`",
+                back: "`strrev()` membalikkan urutan karakter string.\n`strchr()` mencari posisi karakter tertentu dalam suatu string.",
+                hint: "Reverse string dan search character."
+            }
+        ];
+
+        function App() {
+            const [cards, setCards] = useState(flashcardsData);
+            const [currentIndex, setCurrentIndex] = useState(0);
+            const [isFlipped, setIsFlipped] = useState(false);
+            const [showHint, setShowHint] = useState(false);
+            const [selectedCategory, setSelectedCategory] = useState("Semua");
+
+            const categories = ["Semua", ...new Set(flashcardsData.map(c => c.category))];
+
+            const filteredCards = selectedCategory === "Semua" 
+                ? cards 
+                : cards.filter(c => c.category === selectedCategory);
+
+            useEffect(() => {
+                setCurrentIndex(0);
+                setIsFlipped(false);
+                setShowHint(false);
+            }, [selectedCategory]);
+
+            const currentCard = filteredCards[currentIndex] || filteredCards[0];
+
+            const handleNext = () => {
+                setIsFlipped(false);
+                setShowHint(false);
+                setTimeout(() => {
+                    setCurrentIndex((prev) => (prev + 1) % filteredCards.length);
+                }, 150);
+            };
+
+            const handlePrev = () => {
+                setIsFlipped(false);
+                setShowHint(false);
+                setTimeout(() => {
+                    setCurrentIndex((prev) => (prev - 1 + filteredCards.length) % filteredCards.length);
+                }, 150);
+            };
+
+            const handleShuffle = () => {
+                setIsFlipped(false);
+                setShowHint(false);
+                const shuffled = [...cards].sort(() => Math.random() - 0.5);
+                setCards(shuffled);
+                setCurrentIndex(0);
+            };
+
+            return (
+                <div className="flex-1 flex flex-col max-w-4xl w-full mx-auto p-4 sm:p-6">
+                    {/* Header */}
+                    <header className="text-center my-4">
+                        <h1 className="text-2xl sm:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
+                            Flashcard Preparation UTS
+                        </h1>
+                        <p className="text-slate-400 mt-2 text-sm sm:text-base">
+                            Algoritma & Pemrograman C++ (50 Soal Lengkap)
+                        </p>
+                    </header>
+
+                    {/* Filter & Controls */}
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 my-4 bg-slate-800/60 p-4 rounded-xl border border-slate-700/50">
+                        <div className="w-full sm:w-auto flex items-center gap-2">
+                            <label className="text-sm font-medium text-slate-300">Topik:</label>
+                            <select 
+                                value={selectedCategory} 
+                                onChange={(e) => setSelectedCategory(e.target.value)}
+                                className="bg-slate-900 text-slate-200 text-sm rounded-lg p-2.5 border border-slate-700 focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
+                            >
+                                {categories.map((cat, idx) => (
+                                    <option key={idx} value={cat}>{cat}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="text-sm font-medium text-slate-300">
+                            Kartu {currentIndex + 1} dari {filteredCards.length}
+                        </div>
+
+                        <button 
+                            onClick={handleShuffle}
+                            className="w-full sm:w-auto px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-100 rounded-lg text-sm font-semibold transition flex items-center justify-center gap-2"
+                        >
+                            <i data-lucide="shuffle" className="w-4 h-4"></i> Acak Kartu
+                        </button>
+                    </div>
+
+                    {/* Flashcard Component */}
+                    {filteredCards.length > 0 ? (
+                        <div className="flex-1 flex flex-col items-center justify-center my-4">
+                            <div 
+                                onClick={() => setIsFlipped(!isFlipped)}
+                                className="w-full min-h-[320px] sm:min-h-[380px] perspective-1000 cursor-pointer"
+                            >
+                                <div className={`relative w-full h-full duration-500 transform-style-3d transition-transform ${isFlipped ? 'rotate-y-180' : ''}`}>
+                                    
+                                    {/* Front Card */}
+                                    <div className="absolute w-full h-full backface-hidden bg-slate-800 border-2 border-slate-700 hover:border-blue-500/50 rounded-2xl p-6 sm:p-8 flex flex-col justify-between shadow-2xl transition">
+                                        <div>
+                                            <span className="inline-block px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full text-xs font-semibold mb-4">
+                                                {currentCard.category}
+                                            </span>
+                                            <h3 className="text-slate-400 text-xs uppercase tracking-wider font-semibold mb-2">Pertanyaan / Konsep:</h3>
+                                            <h2 className="text-xl sm:text-2xl font-bold text-slate-100 leading-snug">
+                                                {currentCard.front}
+                                            </h2>
+                                        </div>
+
+                                        <div className="mt-6 flex justify-between items-center text-xs text-slate-500">
+                                            <span>Klik kartu untuk melihat jawaban</span>
+                                            <span className="flex items-center gap-1 text-blue-400 font-medium">
+                                                <i data-lucide="rotate-cw" className="w-3.5 h-3.5"></i> Balik
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Back Card */}
+                                    <div className="absolute w-full h-full backface-hidden rotate-y-180 bg-slate-800 border-2 border-emerald-500/40 rounded-2xl p-6 sm:p-8 flex flex-col justify-between shadow-2xl">
+                                        <div>
+                                            <span className="inline-block px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-xs font-semibold mb-4">
+                                                Jawaban & Penjelasan
+                                            </span>
+                                            <div className="text-slate-200 text-base sm:text-lg whitespace-pre-line font-normal leading-relaxed">
+                                                {currentCard.back}
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-6 flex justify-between items-center text-xs text-slate-500">
+                                            <span>Klik untuk kembali ke pertanyaan</span>
+                                            <span className="flex items-center gap-1 text-emerald-400 font-medium">
+                                                <i data-lucide="rotate-cw" className="w-3.5 h-3.5"></i> Balik
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            {/* Hint Section */}
+                            <div className="w-full mt-4 min-h-[50px] text-center">
+                                {showHint ? (
+                                    <p className="text-sm bg-amber-500/10 border border-amber-500/20 text-amber-300 p-3 rounded-xl inline-block">
+                                        💡 <strong>Petunjuk:</strong> {currentCard.hint}
+                                    </p>
+                                ) : (
+                                    <button 
+                                        onClick={() => setShowHint(true)}
+                                        className="text-xs text-slate-400 hover:text-amber-400 underline transition"
+                                    >
+                                        Butuh petunjuk?
+                                    </button>
+                                )}
+                            </div>
+
+                            {/* Navigation Buttons */}
+                            <div className="flex items-center gap-4 mt-6 w-full max-w-xs">
+                                <button 
+                                    onClick={handlePrev}
+                                    className="flex-1 py-3 px-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold rounded-xl transition shadow flex items-center justify-center gap-2"
+                                >
+                                    ← Sebelum
+                                </button>
+                                <button 
+                                    onClick={handleNext}
+                                    className="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition shadow flex items-center justify-center gap-2"
+                                >
+                                    Lanjut →
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="text-center py-12 text-slate-400">
+                            Tidak ada kartu pada topik ini.
+                        </div>
+                    )}
+
+                    {/* Footer */}
+                    <footer className="mt-auto text-center py-4 text-xs text-slate-500">
+                        Sukses UTS Algoritma & Pemrograman! Diproduksi untuk persiapan belajar cepat.
+                    </footer>
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+
+        // Render Lucide Icons
+        setTimeout(() => {
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+        }, 500);
+    </script>
+</body>
+</html>
